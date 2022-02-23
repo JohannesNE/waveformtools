@@ -2,27 +2,10 @@
 % Please edit documentation in R/annotate_waveforms.R
 \name{gen_annotation_index}
 \alias{gen_annotation_index}
-\title{Generate index vector for signal vector.}
+\title{Add indexing of signal time in relation to some recurring event.}
 \usage{
-gen_annotation_index(
-  data,
-  time_annotation,
-  time_col = 1,
-  prefix = "ann",
-  incl_prev_lengths = FALSE
-)
-}
-\arguments{
-\item{data}{A data frame with at least a time column}
-
-\item{time_annotation}{A vector of time stamps for some annotation}
-
-\item{time_col}{Index or name of time column}
-
-\item{prefix}{Prefix to new columns}
-
-\item{incl_prev_lengths}{Include length of previous 3 cycles as variables}
+gen_annotation_index(...)
 }
 \description{
-Index is the time since the most recent occurrence of some annotation. e.g. QRS complex
+Index is the time since the most recent occurrence of some event e.g. QRS complex
 }

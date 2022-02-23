@@ -14,10 +14,10 @@ test_that('find_abp_beats finds all peaks', {
 
 })
 
-test_that('gen_annotation_index creats reasonable values', {
+test_that('add_time_since_event creats reasonable values', {
     abp_beats2 <- find_abp_beats(abp_subset)
     resp_start <- abp_subset$time[seq(20, length(abp_subset$time), by = 1e3)]
-    resp_index <- gen_annotation_index(abp_beats2, time_annotation = resp_start)
+    resp_index <- add_time_since_event(abp_beats2, time_event = resp_start)
 
     # Annotation index between
     expect_gt(max(resp_index$ann_index, na.rm = TRUE), 7.9)

@@ -47,8 +47,8 @@ Index cvp to respiratory and cardiac cycle
 
 ```{r}
 cvp_indexed <- cvp %>% 
-  gen_annotation_index(sample_record2$qrs$time, prefix = 'qrs') %>% 
-  gen_annotation_index(sample_record2$vscapture$insp_start$time, prefix = 'insp')
+  add_time_since_event(sample_record2$qrs$time, prefix = 'qrs') %>% 
+  add_time_since_event(sample_record2$vscapture$insp_start$time, prefix = 'insp')
 
 head(cvp_indexed)
 ```

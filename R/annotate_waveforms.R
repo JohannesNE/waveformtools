@@ -217,20 +217,20 @@ flag_beats <- function(beats_df, max_pos_after_sys = 2, max_PP_change = 0.15) {
 }
 
 
-#' Generate index vector for signal vector.
+#' Add indexing of signal time in relation to some recurring event.
 #'
-#' Index is the time since the most recent occurrence of some annotation. e.g. QRS complex
+#' Index is the time since the most recent occurrence of some event e.g. QRS complex
 #'
 #' @param data A data frame with at least a time column
+#' @param time_event A vector of time stamps for some annotation
 #' @param time_col Index or name of time column
-#' @param time_annotation A vector of time stamps for some annotation
 #' @param prefix Prefix to new columns
 #' @param incl_prev_lengths Include length of previous 3 cycles as variables
 #' @export
-gen_annotation_index <- function(data, time_annotation, time_col = 1, prefix = 'ann',
+add_time_since_event <- function(data, time_event, time_col = 1, prefix = 'ann',
                                  incl_prev_lengths = FALSE) {
     if (nrow(data) == 0) stop("No Data")
-    if (length(time_annotation) == 0) stop("No Annotations")
+    if (length(time_event) == 0) stop("No Annotations")
 
     if (!is.data.frame(data)) {
         time_vec <- data
@@ -240,18 +240,18 @@ gen_annotation_index <- function(data, time_annotation, time_col = 1, prefix = '
     }
 
 
-    if (("POSIXct" %in% class(time_vec) & "POSIXct" %in% class(time_annotation)) ||
-        ("hms" %in% class(time_vec) & "hms" %in% class(time_annotation))) {
+    if (("POSIXct" %in% class(time_vec) & "POSIXct" %in% class(time_event)) ||
+        ("hms" %in% class(time_vec) & "hms" %in% class(time_event))) {
         time_vec <- as.numeric(time_vec, units = 'secs')
-        time_annotation <- as.numeric(time_annotation, units = 'secs')
+        time_event <- as.numeric(time_event, units = 'secs')
     }
 
 
-    time_annotation <- sort(time_annotation)
+    time_event <- sort(time_event)
 
     # add cycle length of each annotation (e.g. resp cycle length)
     # The last cycle does not end, and therefore does not have a length
-    cycle_length <- diff(time_annotation)
+    cycle_length <- diff(time_event)
 
     if (incl_prev_lengths) {
         cycle_length_previous_1 <- dplyr::lag(cycle_length)
@@ -275,13 +275,13 @@ gen_annotation_index <- function(data, time_annotation, time_col = 1, prefix = '
 
     for (i in 1:length(time_vec)) {
         # If annotation is after current time, check next time
-        if (time_annotation[i_ann] > time_vec[i]) next
+        if (time_event[i_ann] > time_vec[i]) next
         # If the next annotation is also before the current time_vec, increment i_ann by one.
-        while (i_ann < length(time_annotation) && time_annotation[i_ann + 1] < time_vec[i]) {
+        while (i_ann < length(time_event) && time_event[i_ann + 1] < time_vec[i]) {
             i_ann <- i_ann + 1L
         }
 
-        ann_index[i]      <- time_vec[i] - time_annotation[i_ann]
+        ann_index[i]      <- time_vec[i] - time_event[i_ann]
         cycle_len[i]      <- cycle_length[i_ann]
         ann_n[i]          <- i_ann
 
@@ -310,6 +310,19 @@ gen_annotation_index <- function(data, time_annotation, time_col = 1, prefix = '
     names(res) <- paste(prefix, names(res), sep = '_')
 
     dplyr::bind_cols(data, res)
+}
+
+#' Add indexing of signal time in relation to some recurring event.
+#'
+#' Index is the time since the most recent occurrence of some event e.g. QRS complex
+#'
+#' @inheritParams add_time_since_event
+#'
+#' @export
+gen_annotation_index <- function(...) {
+    warning("gen_annotation_index has been renamed to add_time_since_event\n
+            Parameter: time_annotation is renamed to time_event")
+    add_time_since_event(...)
 }
 
 #' Find R peaks in ECG
