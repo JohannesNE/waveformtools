@@ -69,7 +69,7 @@ as_seconds <- function(x) {
 #'
 #' @export
 seconds_since_start <- function(x) {
-    assertthat::assert_that('POSIXt' %in% class(x))
+    assertthat::assert_that(any(c('POSIXt', 'hms') %in% class(x)))
     as.numeric(x - x[1], units = 'secs')
 }
 
@@ -181,7 +181,6 @@ anonymize_record_time <- function(rec) {
 #' Convert record datetime to HMS
 #'
 #' Convert all timestamps to HMS (seconds since midnight)
-#' and add a date entry to the record
 #'
 #' @param rec (nested) list of signals
 #'
