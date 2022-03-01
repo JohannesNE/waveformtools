@@ -62,10 +62,10 @@ find_abp_beats <- function(data,
     }
 
     #create cuttoff pressure from average pressure (movingaves is fast)
-    moving_mean_p <- accelerometry::movingaves(
+    moving_mean_p <- RcppRoll::roll_mean(
         #repeat avg of last measurements (* movingavg_win) to get equal lengths
         c(abp,rep(mean(tail(abp, win_size_avg)), win_size_avg-1)),
-        window = win_size_avg)
+        n = win_size_avg)
 
     # group cycles
     # finds every crossing of cutoff pressure, and keeps only changes from high to low
