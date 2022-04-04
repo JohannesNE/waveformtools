@@ -9,9 +9,6 @@
 #'
 #' @param data Vector of arterial blood pressure.
 #' @param abp_col Index or name of column with abp data
-#' @param min_PP Minimum ratio of PP/mean pressure.
-#' If a beat has a lower PP, it is considered a fluctuation around the threshold.
-#' The dicrotic notch is a common cause of such fluctuations.
 #'
 #' @param min_beat_width_s Minimum beat width (in seconds)
 #' The default is 0.3 seconds
@@ -61,7 +58,7 @@ find_abp_beats <- function(data,
         if (is.null(sample_rate)) message('Sample rate not set. Returning beat length in samples ')
     }
 
-    #create cuttoff pressure from average pressure (movingaves is fast)
+    #create cuttoff pressure from average pressure (RcppRoll::roll_mean is fast)
     moving_mean_p <- RcppRoll::roll_mean(
         #repeat avg of last measurements (* movingavg_win) to get equal lengths
         c(abp,rep(mean(tail(abp, win_size_avg)), win_size_avg-1)),
@@ -108,7 +105,6 @@ find_abp_beats <- function(data,
     if(!is.null(sample_rate)) res$segment_len <- res$segment_len * 1/sample_rate
 
     res <- dplyr::filter(res,
-                         #PP/moving_mean_p[segment_start] > min_PP,
                          dia_pos > 20, # First min cannot be among the first 20 samples
                          dia_pos < length(abp) - 100) # and last min cannot be among the last 60
                                                      # (to avoid detecting a dicrotic notch as a diastole)

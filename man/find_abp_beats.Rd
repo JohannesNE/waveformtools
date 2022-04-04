@@ -24,10 +24,6 @@ find_abp_beats(
 \item{time_col}{Vector with the same length as \code{abp}, used to indicate the timing of each sample.
 If this variable is provided, sample indexes will be substituted for this vector.}
 
-\item{min_PP}{Minimum ratio of PP/mean pressure.
-If a beat has a lower PP, it is considered a fluctuation around the threshold.
-The dicrotic notch is a common cause of such fluctuations.}
-
 \item{min_beat_width_s}{Minimum beat width (in seconds)
 The default is 0.3 seconds}
 

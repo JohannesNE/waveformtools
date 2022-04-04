@@ -11,5 +11,4 @@ record_time_to_hms(rec, as_datetime = FALSE)
 }
 \description{
 Convert all timestamps to HMS (seconds since midnight)
-and add a date entry to the record
 }
