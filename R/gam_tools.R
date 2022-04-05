@@ -22,8 +22,8 @@ get_gam_ppv <- function(model, term, ppv_only = FALSE) {
       stop("model is not a GAM model")
     }
   } else {
-    smooth <- gratia::evaluate_smooth(model, term)
-    model_intercept <- model$coefficients[1]
+    smooth <- gratia::smooth_estimates(model, term)
+    model_intercept <- unname(model$coefficients[1])
 
     max_i <- which.max(smooth$est)
     min_i <- which.min(smooth$est)
@@ -42,9 +42,6 @@ get_gam_ppv <- function(model, term, ppv_only = FALSE) {
   if (ppv_only) {
     return(PPV)
   }
-
-
-
 
   dplyr::tibble(min_est,
     max_est,
@@ -174,4 +171,90 @@ dygraph_gam <- function(..., resid = FALSE) {
   )
 
   dygraph_signal(df, dplyr::all_of(names(df)[-1]), main = '')
+}
+
+# Fit a GAM to the pulse pressure data, assuming a specific respiratory cycle length.
+fit_PP_gam  <- function(resp_len, data) {
+    PP_insp_indexed <- dplyr::mutate(data,
+        insp_rel_index = (time_s %% resp_len) / resp_len)
+
+    mgcv::gam(
+    PP ~
+    s(insp_rel_index,
+      k = 15, # 15 knots.
+      bs = "cc" # The basis is a cyclic cubic spline
+      ) +
+    s(time_s,
+      bs = "cr" # The basis is a natural cubic spline.
+      ),
+    knots = list(insp_rel_index = c(0,1)),
+    method = "REML",
+    data = PP_insp_indexed)
+}
+
+# get reml from GAM
+get_gam_reml  <- function(mod) {
+    mod$gcv.ubre["REML"]
+}
+
+gam_resp_reml <- function(resp_len, data) {
+    fit_PP_gam(resp_len, data) |>
+        get_gam_reml()
+}
+
+#' Find resp length from Pulse Pressure data using GAM
+#'
+#' @param data Data frame of timings and pulse pressures of beats
+#' @param PP_col Column with pulse pressure values
+#' @param time_col Columns with times
+#' @param search_interval Respiratory cycle length intervals to search
+#'
+#' @return The respiratory length that minimizes the GAM REML score
+#' @export
+#'
+find_resp_len_from_PP <- function(data, PP_col = "PP",
+                                  time_col = "time",
+                                  search_interval = c(1.5, 7)) {
+    data[["PP"]] <- data[[PP_col]]
+    data[["time_s"]] <- as_seconds(data[[time_col]])
+    opt_len <- optimize(gam_resp_reml, interval = search_interval, data=data)
+
+    opt_len$minimum
+}
+
+#' Analyse Pulse Pressure data using a GAM
+#' Respiratory cycle length is found by using the value that minimizes model
+#' REML score
+#'
+#' @inheritParams find_resp_len_from_PP
+#' @param plot Diagnostic GAM plot usign gratia::draw
+#' @param return_GAM Return fitted GAM instead of data frame
+#'
+#' @return Data frame of respiratory cycle length, respiratory rate and PPV.
+#' @export
+#'
+PP_gam_analysis <- function(data,
+                            plot = FALSE,
+                            return_GAM = FALSE,
+                            PP_col = "PP",
+                            time_col = "time",
+                            search_interval = c(1.5, 7)) {
+
+    data[["PP"]] <- data[[PP_col]]
+    data[["time_s"]] <- as_seconds(data[[time_col]])
+    opt_resp_len <- find_resp_len_from_PP(data=data, search_interval = search_interval)
+
+    PP_gam <- fit_PP_gam(opt_resp_len, data)
+    PPV <- get_gam_ppv(PP_gam, "s(insp_rel_index)", ppv_only = TRUE)
+
+    if (plot) {
+        gratia::draw(PP_gam, residuals = TRUE)
+    }
+
+    if (return_GAM) {
+        return(PP_gam)
+    }
+
+    data.frame(resp_len = opt_resp_len, resp_rate = 60/opt_resp_len, PPV = PPV)
+
 }
