@@ -54,9 +54,10 @@ find_abp_beats <- function(data,
 
     if (is.null(sample_rate)) {
         sample_rate <- attr(data, 'signal.samplerate')
-        min_beat_width <- as.integer(min_beat_width_s * 125)
         if (is.null(sample_rate)) message('Sample rate not set. Returning beat length in samples ')
     }
+
+    min_beat_width <- as.integer(min_beat_width_s * sample_rate)
 
     #create cuttoff pressure from average pressure (RcppRoll::roll_mean is fast)
     moving_mean_p <- RcppRoll::roll_mean(
