@@ -36,8 +36,8 @@ test_that('flag_beats works', {
     abp_beats2 <- find_abp_beats(abp_subset)
     flagged <- flag_beats(abp_beats2, max_pos_after_sys = 2)
     expect_equal(which(flagged),
-                 c(85L, 86L, 87L, 88L, 95L, 96L, 97L, 98L, 99L, 100L, 101L, 102L,
-                   103L, 104L, 105L, 110L, 117L, 118L, 119L, 120L, 121L, 175L, 176L,
-                   177L, 178L, 179L, 180L, 181L, 182L, 183L, 184L, 185L, 186L, 187L,
-                   188L, 189L, 190L, 191L, 192L, 193L, 194L, 195L, 196L, 197L))
+                 c(85L, 86L, 87L, 88L, 95L, 96L, 98L, 99L, 100L, 101L, 102L, 103L,
+                   104L, 105L, 110L, 117L, 118L, 119L, 120L, 121L, 175L, 176L, 177L,
+                   178L, 179L, 180L, 181L, 182L, 183L, 184L, 185L, 186L, 187L, 188L,
+                   189L, 190L, 191L, 192L, 193L, 194L, 195L, 196L, 197L))
 })

@@ -204,13 +204,23 @@ is_extra_systole <- function(beat_times, threshold = 0.1) {
 #' @return a vector indicating whether a beat is noisy / abnormal
 #'
 #' @export
-flag_beats <- function(beats_df, max_pos_after_sys = 2, max_PP_change = 0.15) {
-    # Median pp of 9 beats (4 on each side).
-    median_PP_9 <- dplyr::lag(runmed(beats_df$PP, k = 9), default = beats_df$PP[1])
+flag_beats <- function(beats_df, max_pos_after_sys = 2, max_PP_change = 0.15, type = c("both", "PP", "noise")) {
+    type = match.arg(type, c("both", "PP", "noise"))
 
-    beats_df$PP > median_PP_9 * (1 + max_PP_change) |
-        beats_df$PP < median_PP_9 * (1 - max_PP_change) |
-        beats_df$.noise_pos_after_sys > max_pos_after_sys
+    # Median pp of 9 beats (4 on each side).
+    median_PP_9 <- dplyr::lag(RcppRoll::roll_medianr(beats_df$PP, n = 10,
+                                                     fill = median(beats_df$PP[1:10])))
+
+
+    PP_outlier <- beats_df$PP > median_PP_9 * (1 + max_PP_change) |
+        beats_df$PP < median_PP_9 * (1 - max_PP_change)
+
+    noise <- beats_df$.noise_pos_after_sys > max_pos_after_sys
+
+    if (type == "both") PP_outlier | noise
+    else if (type == "PP") PP_outlier
+    else if (type == "noise") noise
+    else stop("type should be one of: both, PP, noise")
 }
 
 
