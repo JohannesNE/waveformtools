@@ -4,12 +4,14 @@
 \alias{plot_PP_gam}
 \title{Plot pulse pressure GAM smooths and partial residuals}
 \usage{
-plot_PP_gam(PP_gam, return_list = FALSE)
+plot_PP_gam(PP_gam, return_list = FALSE, add.ci = TRUE)
 }
 \arguments{
 \item{PP_gam}{PP GAM}
 
 \item{return_list}{If true, return list of plots instead of combined plot.}
+
+\item{add.ci}{Show 95\% confidence interval on plots.}
 }
 \value{
 Patchworked ggplot

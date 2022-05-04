@@ -4,7 +4,12 @@
 \alias{flag_beats}
 \title{Flag Abnormal Beats}
 \usage{
-flag_beats(beats_df, max_pos_after_sys = 2, max_PP_change = 0.15)
+flag_beats(
+  beats_df,
+  max_pos_after_sys = 2,
+  max_PP_change = 0.15,
+  type = c("both", "PP", "noise")
+)
 }
 \arguments{
 \item{beats_df}{Dataframe of beats (from \code{find_abp_beats()})}

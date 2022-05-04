@@ -78,10 +78,11 @@ get_PP_gam_predictions <- function(PP_gam) {
 #'
 #' @param PP_gam PP GAM
 #' @param return_list If true, return list of plots instead of combined plot.
+#' @param add.ci Show 95% confidence interval on plots.
 #'
 #' @return Patchworked ggplot
 #' @export
-plot_PP_gam <- function(PP_gam, return_list = FALSE) {
+plot_PP_gam <- function(PP_gam, return_list = FALSE, add.ci = TRUE) {
 
   # Get smooth labels
   params <- purrr::map_chr(PP_gam$smooth, purrr::pluck, "label")
@@ -94,22 +95,31 @@ plot_PP_gam <- function(PP_gam, return_list = FALSE) {
   # Model visualizations
 
   # Get representations of smooths
-  insp_smooth <- gratia::evaluate_smooth(PP_gam,
+  insp_smooth <- gratia::smooth_estimates(PP_gam,
     smooth = params[1],
     newdata = seq(0, 1, length.out = 100)
   )
 
-  time_smooth <- gratia::evaluate_smooth(PP_gam,
+  time_smooth <- gratia::smooth_estimates(PP_gam,
                                          smooth = params[2])
 
 
-  geom_ci_ribbon <- ggplot2::geom_ribbon(ggplot2::aes(ymin = est - 1.96 * se, ymax = est + 1.96 * se),
-    fill = ggplot2::alpha("black", 0),
-    colour = "black", linetype = 2, outline.type = "both"
-  )
+  geom_ci_ribbon <- function() {
+      if (add.ci) {
+          ggplot2::geom_ribbon(
+              ggplot2::aes(ymin = est - 1.96 * se, ymax = est + 1.96 * se),
+              fill = ggplot2::alpha("black", 0),
+              colour = "black",
+              linetype = 2,
+              outline.type = "both"
+          )
+      } else {
+          NULL
+      }
+  }
 
   insp_smooth_plot <- ggplot2::ggplot(insp_smooth, ggplot2::aes_string(terms[1], "est")) +
-    geom_ci_ribbon +
+    geom_ci_ribbon() +
     ggplot2::geom_line() +
     ggplot2::geom_point(ggplot2::aes(y = PP_detrend), data = beats_p, alpha = 0.7) +
     ggplot2::labs(
@@ -120,7 +130,7 @@ plot_PP_gam <- function(PP_gam, return_list = FALSE) {
     ggplot2::scale_x_continuous(labels = scales::percent)
 
   time_smooth_plot <- ggplot2::ggplot(time_smooth, ggplot2::aes_string(terms[2], "est")) +
-    geom_ci_ribbon +
+    geom_ci_ribbon() +
     ggplot2::geom_line() +
     ggplot2::labs(
       x = "Time [s]",
