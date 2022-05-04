@@ -95,9 +95,13 @@ plot_PP_gam <- function(PP_gam, return_list = FALSE, add.ci = TRUE) {
   # Model visualizations
 
   # Get representations of smooths
+  newdata <- data.frame(resp = seq(0, 1, length.out = 100),
+                        time = 0)
+  names(newdata) <- terms
+
   insp_smooth <- gratia::smooth_estimates(PP_gam,
     smooth = params[1],
-    newdata = seq(0, 1, length.out = 100)
+    data = newdata
   )
 
   time_smooth <- gratia::smooth_estimates(PP_gam,
