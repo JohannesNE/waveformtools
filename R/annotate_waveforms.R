@@ -188,7 +188,7 @@ is_extra_systole <- function(beat_times, threshold = 0.1) {
     es <- rep(FALSE, length(beat_times))
 
     for (i in 4:length(beat_times)) {
-        es[i] <- beat_interval[i-1] < ((1-threshold) * median(beat_interval[max(i-11, 1): (i-2)]))
+        es[i] <- beat_interval[i-1] < ((1-threshold) * stats::median(beat_interval[max(i-11, 1): (i-2)]))
     }
 
     es
@@ -209,7 +209,7 @@ flag_beats <- function(beats_df, max_pos_after_sys = 2, max_PP_change = 0.15, ty
 
     # Median pp of 9 beats (4 on each side).
     median_PP_9 <- dplyr::lag(RcppRoll::roll_medianr(beats_df$PP, n = 10,
-                                                     fill = median(beats_df$PP[1:10])))
+                                                     fill = stats::median(beats_df$PP[1:10])))
 
 
     PP_outlier <- beats_df$PP > median_PP_9 * (1 + max_PP_change) |

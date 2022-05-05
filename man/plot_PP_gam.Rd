@@ -4,7 +4,7 @@
 \alias{plot_PP_gam}
 \title{Plot pulse pressure GAM smooths and partial residuals}
 \usage{
-plot_PP_gam(PP_gam, return_list = FALSE, add.ci = TRUE)
+plot_PP_gam(PP_gam, return_list = FALSE, add.ci = TRUE, add.intercept = TRUE)
 }
 \arguments{
 \item{PP_gam}{PP GAM}
@@ -12,6 +12,8 @@ plot_PP_gam(PP_gam, return_list = FALSE, add.ci = TRUE)
 \item{return_list}{If true, return list of plots instead of combined plot.}
 
 \item{add.ci}{Show 95\% confidence interval on plots.}
+
+\item{add.intercept}{Add model intercept to trend plot.}
 }
 \value{
 Patchworked ggplot

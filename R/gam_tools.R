@@ -79,10 +79,11 @@ get_PP_gam_predictions <- function(PP_gam) {
 #' @param PP_gam PP GAM
 #' @param return_list If true, return list of plots instead of combined plot.
 #' @param add.ci Show 95% confidence interval on plots.
+#' @param add.intercept Add model intercept to trend plot.
 #'
 #' @return Patchworked ggplot
 #' @export
-plot_PP_gam <- function(PP_gam, return_list = FALSE, add.ci = TRUE) {
+plot_PP_gam <- function(PP_gam, return_list = FALSE, add.ci = TRUE, add.intercept = TRUE) {
 
   # Get smooth labels
   params <- purrr::map_chr(PP_gam$smooth, purrr::pluck, "label")
@@ -104,8 +105,11 @@ plot_PP_gam <- function(PP_gam, return_list = FALSE, add.ci = TRUE) {
     data = newdata
   )
 
+  intercept <- if(add.intercept) coef(PP_gam)[1] else 0
+
   time_smooth <- gratia::smooth_estimates(PP_gam,
-                                         smooth = params[2])
+                                         smooth = params[2]) |>
+      mutate(est = est + intercept)
 
 
   geom_ci_ribbon <- function() {
