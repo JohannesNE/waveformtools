@@ -74,7 +74,7 @@ find_PP_minmax <- function(beats, PP_col = "PP", time_col = 1,
         vent_window_max <- PP_df[PP_df$time > t_min & PP_df$time < t_min + resp_len,]
 
         # If the search frame is less than two beats, move one resp_len forward.
-        if(nrow(vent_window_max) < 2) {
+        if(nrow(vent_window_max) < 1) {
             t_min <- t_min + resp_len
             next
         }
@@ -88,7 +88,7 @@ find_PP_minmax <- function(beats, PP_col = "PP", time_col = 1,
 
         # If the search frame is less than two beats, move one resp_len forward.
         # Move t_min to start new search for min and max.
-        if(nrow(vent_window_min) < 2) {
+        if(nrow(vent_window_min) < 1) {
             t_min <- t_min + resp_len
             next
         }
