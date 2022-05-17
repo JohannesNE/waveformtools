@@ -17,6 +17,9 @@
 #' This is used to calculate the cutoff value for when a peak represents a new beat and not just noise.
 #' Lower values increase flexibility. Use visualize_abp_peak_detection() to dial in.
 #'
+#' @param min_cross_to_diastole Minimum time (seconds) from the threshold crossing (downstroke)
+#' to the diastole. Can be used to avoid detecting a low dicrotic notch as a diastole.
+#'
 #' @param time_col Vector with the same length as `abp`, used to indicate the timing of each sample.
 #' If this variable is provided, sample indexes will be substituted for this vector.
 #'
@@ -33,6 +36,7 @@ find_abp_beats <- function(data,
                            min_PP = 0.20,
                            min_beat_width_s = 0.3,
                            win_size_avg = 2000,
+                           min_cross_to_diastole = NULL,
                            show.plot = FALSE,
                            include_waveform = FALSE,
                            sample_rate = NULL) {
@@ -74,6 +78,15 @@ find_abp_beats <- function(data,
     cross_index <- which(c(diff(abp < (moving_mean_p * 1.1)), 0) == 1)
 
     cross_groups <- splitAt(abp, cross_index, trim_ends = FALSE)
+
+    if (!is.null(min_cross_to_diastole)) {
+        excl_ind <- trunc(sample_rate * min_cross_to_diastole)
+        cross_groups <- purrr::map(cross_groups, function(grp) {
+            # measurements before min_cross_to_diastole cannot be min.
+            grp[1:excl_ind] <- Inf
+            return (grp)
+        })
+    }
 
     # Split abp by diastoles
     dia_index <- purrr::map_int(cross_groups, which.min) + c(0, cross_index - 1)

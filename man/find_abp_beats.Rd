@@ -11,6 +11,7 @@ find_abp_beats(
   min_PP = 0.2,
   min_beat_width_s = 0.3,
   win_size_avg = 2000,
+  min_cross_to_diastole = NULL,
   show.plot = FALSE,
   include_waveform = FALSE,
   sample_rate = NULL
@@ -30,6 +31,9 @@ The default is 0.3 seconds}
 \item{win_size_avg}{Window size for moving avg calculation.
 This is used to calculate the cutoff value for when a peak represents a new beat and not just noise.
 Lower values increase flexibility. Use visualize_abp_peak_detection() to dial in.}
+
+\item{min_cross_to_diastole}{Minimum time (seconds) from the threshold crossing (downstroke)
+to the diastole. Can be used to avoid detecting a low dicrotic notch as a diastole.}
 
 \item{show.plot}{Show diagnostic plot}
 
