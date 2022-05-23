@@ -221,13 +221,13 @@ flag_beats <- function(beats_df, max_pos_after_sys = 2, max_PP_change = 0.15, ty
     type = match.arg(type, c("both", "PP", "noise"))
 
     # Median pp of 9 beats (4 on each side).
-    median_PP_9 <- RcppRoll::roll_median(beats_df$PP, n = 11,
+    median_PP_10 <- RcppRoll::roll_median(beats_df$PP, n = 11,
                                          weights = c(1,1,1,1,1,0,1,1,1,1,1),
                                                      fill = stats::median(beats_df$PP[1:9]))
 
 
-    PP_outlier <- beats_df$PP > median_PP_9 * (1 + max_PP_change) |
-        beats_df$PP < median_PP_9 * (1 - max_PP_change)
+    PP_outlier <- beats_df$PP > median_PP_10 * (1 + max_PP_change) |
+        beats_df$PP < median_PP_10 * (1 - max_PP_change)
 
     noise <- beats_df$.noise_pos_after_sys > max_pos_after_sys
 
