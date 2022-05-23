@@ -24,6 +24,7 @@ get_gam_ppv <- function(model, term, ppv_only = FALSE) {
   } else {
     smooth <- gratia::smooth_estimates(model, term)
     model_intercept <- unname(model$coefficients[1])
+    term_variable <- stringr::str_replace(term, "s\\((.+)\\)", "\\1")
 
     max_i <- which.max(smooth$est)
     min_i <- which.min(smooth$est)
@@ -51,7 +52,9 @@ get_gam_ppv <- function(model, term, ppv_only = FALSE) {
     PPV_se,
     PPV_lower = PPV - 1.96 * PPV_se,
     PPV_upper = PPV + 1.96 * PPV_se,
-    model_intercept
+    model_intercept,
+    min_pos = smooth[[term_variable]][min_i],
+    max_pos = smooth[[term_variable]][max_i]
   )
 }
 
