@@ -15,7 +15,14 @@ gen_device_settings_annotation <- function(dev_settings, min_setting_len = 0) {
                          .setting_num = cumsum(.rr_change + .vt_change)
                          )
 
-    res <- dplyr::distinct(res, Inspiratory_tidal_volume_L, Respiratory_rate, .setting_num,
+    res <- dplyr::distinct(res,
+                           Inspiratory_tidal_volume_L,
+                           Respiratory_rate,
+                           Fresh_gas_flow,
+                           Oxygen_concentration_in_the_fresh,
+                           Positive_end_expiratory_pressure,
+                           Pressure_rise_time,
+                           .setting_num,
                                .keep_all = TRUE)
 
 
