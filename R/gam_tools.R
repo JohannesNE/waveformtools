@@ -26,12 +26,12 @@ get_gam_ppv <- function(model, term, ppv_only = FALSE) {
     model_intercept <- unname(model$coefficients[1])
     term_variable <- stringr::str_replace(term, "s\\((.+)\\)", "\\1")
 
-    max_i <- which.max(smooth$est)
-    min_i <- which.min(smooth$est)
-    max_est <- smooth$est[max_i]
-    max_se <- smooth$se[max_i]
-    min_est <- smooth$est[min_i]
-    min_se <- smooth$se[min_i]
+    max_i <- which.max(smooth$.estimate)
+    min_i <- which.min(smooth$.estimate)
+    max_est <- smooth$.estimate[max_i]
+    max_se <- smooth$.se[max_i]
+    min_est <- smooth$.estimate[min_i]
+    min_se <- smooth$.se[min_i]
 
     PPV <- (max_est - min_est) / model_intercept
 

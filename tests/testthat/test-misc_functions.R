@@ -27,7 +27,8 @@ test_that('Subset record works', {
 test_that('record_time_to_hms works', {
   sample_rec_hms <- record_time_to_hms(sample_record)
 
-  expect_equal(hms::trunc_hms(sample_rec_hms$vital$tracks$Intellivue$ABP$time[1], 1) %>% as.character(),
+  expect_equal(hms::trunc_hms(sample_rec_hms$vital$tracks$Intellivue$ABP$time[1], 1) |>
+                   as.character(),
                format(sample_record$vital$tracks$Intellivue$ABP$time[1],
                       "%H:%M:%S"))
 })

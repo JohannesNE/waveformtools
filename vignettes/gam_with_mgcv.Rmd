@@ -27,15 +27,15 @@ library(hms)
 Find a CVP curve
 
 ```{r}
-sample_record2$vital$Intellivue$CVP %>% 
+sample_record2$vital$Intellivue$CVP |>  
   dygraph_signal()
 ```
 
 Find a less noisy period (e.g. 18:42:00 to 18:43:00)
 
 ```{r}
-cvp <- sample_record2$vital$Intellivue$CVP %>% 
-  filter(between(as_hms(time), as_hms("11:29:00"), as_hms("11:30:00"))) %>% 
+cvp <- sample_record2$vital$Intellivue$CVP |> 
+  filter(between(as_hms(time), as_hms("11:29:00"), as_hms("11:30:00"))) |> 
   mutate(time_s = seconds_since_start(time))
 ```
 
@@ -46,8 +46,8 @@ plot_signal(cvp)
 Index cvp to respiratory and cardiac cycle
 
 ```{r}
-cvp_indexed <- cvp %>% 
-  add_time_since_event(sample_record2$qrs$time, prefix = 'qrs') %>% 
+cvp_indexed <- cvp |> 
+  add_time_since_event(sample_record2$qrs$time, prefix = 'qrs') |> 
   add_time_since_event(sample_record2$vscapture$insp_start$time, prefix = 'insp')
 
 head(cvp_indexed)

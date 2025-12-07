@@ -22,18 +22,13 @@ calculate_classic_ppv(
 
 \item{time_col}{Column containing time (datetime or seconds)}
 
-\item{resp_rate}{Either resp_rate (breaths/min) or resp_len (seconds)}
-
-\item{resp_len}{Either resp_rate (breaths/min) or resp_len (seconds)}
+\item{resp_rate, resp_len}{Either resp_rate (breaths/min) or resp_len (seconds)}
 
 \item{average_over_n}{Number of max-min pairs (resp cycles) to average over}
 
 \item{average_fun}{Function used for averaging}
 
 \item{plot_diagnostic}{Show diagnostic plot}
-}
-\value{
-
 }
 \description{
 This function attempt to calculate PPV as described by De Backer, 2009.

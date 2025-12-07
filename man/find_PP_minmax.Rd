@@ -21,9 +21,6 @@ find_PP_minmax(
 
 \item{resp_rate, resp_len}{Either resp_rate (breaths/min) or resp_len (seconds)}
 }
-\value{
-
-}
 \description{
 Find respiratory min and max in pulse pressure time series
 }
