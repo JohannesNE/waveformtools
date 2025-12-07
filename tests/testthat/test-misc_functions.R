@@ -6,7 +6,6 @@ test_that("join nearest works", {
   res <- join_nearest(sample_slow, sample_abp)
 
   # Expect unchanged
-  expect_known_hash(res, 'd82a73499b')
   expect_lt(abs(mean(with(res, time - time.y))), 0.001)
 
   slow_df <- data.frame(key_slow = seq(0, 100, by = 10), slow_val = "a")

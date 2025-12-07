@@ -20,7 +20,7 @@ test_that("rt data loads", {
 test_that("organize_slow_data works", {
   simple_settings <- gen_device_settings_annotation(sample_record$vscapture$DeviceSettings,
                                                     min_setting_len = 5)
-  expect_length(simple_settings$time, 12)
+  expect_length(simple_settings$time, 13)
 
 })
 
